@@ -11,6 +11,8 @@
 #include  "inc/hw_types.h"
 #include  "inc/hw_ints.h"
 
+#include "Application/Application_interface.h"
+
 uint32_t SystemCoreClock = 16000000;
 
 void vPeriodicTask(void *pvParameters)
