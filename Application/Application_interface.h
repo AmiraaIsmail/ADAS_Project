@@ -16,7 +16,7 @@ typedef enum
     Vehilce_Auto_Parking_Mode
 } VehicleMode_t;
 
-VehicleMode_t VehicleMode_obj = Vehicle_Stop_Mode;
+static VehicleMode_t VehicleMode_obj = Vehicle_Stop_Mode;
 
 void Update_Vehicle_Mode(void);
 
