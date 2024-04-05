@@ -7,8 +7,6 @@
 
 #include "UART_0_interface.h"
 
-
-
 void uart_init()
 {
 
@@ -18,8 +16,7 @@ void uart_init()
     // crystal on your board.
 
     SysCtlClockSet(
-            SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN
-                    | SYSCTL_XTAL_16MHZ);
+    SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
 
     //
     // Enable the peripherals used by this example.

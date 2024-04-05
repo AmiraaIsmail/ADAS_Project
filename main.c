@@ -44,33 +44,33 @@ void vPeriodicTask(void *pvParameters)
 
 }
 
-//----------------------
-//------------
+
+
 int main()
 {
+    //---------------------------------------------------------------
+    // Enable the GPIOF peripheral
+    //
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    // Wait for the GPIOF module to be ready.
+    //
+    while (!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF))
+    {
+    }
+    /*
+     // Set pins 2, 4, and 5 as input, SW controlled.
+     //
+     GPIOPinTypeGPIOInput(GPIO_PORTA_BASE,
+     GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
+     * */
 
-    // Enable Clock for PORTF
-    Set_Bit(SYSCTL_RCGCGPIO_R, 5);
-
-//-----------------
-    // Enable Digital PF3
-    Set_Bit(GPIO_PORTF_DEN_R, BUILT_IN_LED_3);
-
-    // Enable Digital PF2
-    Set_Bit(GPIO_PORTF_DEN_R, BUILT_IN_LED_2);
-
-//----------------------
-    // Disable alternative function for PF3
-    Clr_Bit(GPIO_PORTF_AFSEL_R, BUILT_IN_LED_3);
-//--------------------
-    // PF3 as output
-    Set_Bit(GPIO_PORTF_DIR_R, BUILT_IN_LED_3);
-
-    // PF2 as output
-    Set_Bit(GPIO_PORTF_DIR_R, BUILT_IN_LED_2);
-
-//    char cThisChar;
-
+    // Set pins 2 and 3 as output, SW controlled.
+    //
+    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3);
+    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, GPIO_HIGH_LEVEL);
+    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, GPIO_HIGH_LEVEL);
+//-------------------------------------------------------------------
+// PA0 Tx pin   PA1 Rx pin
     uart_init();
 
     xTaskCreate(vPeriodicTask, "My Task", 256, NULL, 1, NULL);
