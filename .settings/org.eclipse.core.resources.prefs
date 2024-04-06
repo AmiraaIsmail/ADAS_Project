@@ -1,8 +1,13 @@
 eclipse.preferences.version=1
 encoding//Debug/Application/subdir_rules.mk=UTF-8
 encoding//Debug/Application/subdir_vars.mk=UTF-8
+<<<<<<< Updated upstream
 encoding//Debug/SERVO/subdir_rules.mk=UTF-8
 encoding//Debug/SERVO/subdir_vars.mk=UTF-8
+=======
+encoding//Debug/LED/subdir_rules.mk=UTF-8
+encoding//Debug/LED/subdir_vars.mk=UTF-8
+>>>>>>> Stashed changes
 encoding//Debug/Source/portable/CCS/ARM_CM4F/subdir_rules.mk=UTF-8
 encoding//Debug/Source/portable/CCS/ARM_CM4F/subdir_vars.mk=UTF-8
 encoding//Debug/Source/portable/MemMang/subdir_rules.mk=UTF-8

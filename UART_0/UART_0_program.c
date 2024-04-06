@@ -2,12 +2,12 @@
  * UART_0_program.c
  *
  *  Created on: Apr 5, 2024
- *      Author: Om562
+ *      Author: M0rE
  */
 
 #include "UART_0_interface.h"
 
-void uart_init()
+void UART_0_Init()
 {
 
 //
@@ -55,7 +55,7 @@ void uart_init()
 
 }
 
-void uart_sendString(uint8_t *st)
+void UART_0_SendString(uint8_t *st)
 {
 
     uint8_t *ptr = st;

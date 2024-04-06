@@ -4,25 +4,19 @@
 #include <FreeRTOS.h>
 #include <task.h>
 
-#include "inc/hw_memmap.h"
-#include "driverlib/gpio.h"
-#include "driverlib/pin_map.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/uart.h"
-
-#include  "BitMath.h"
-#include  "tm4c123gh6pm.h"
 
 #include "Application/Application_interface.h"
 
 #include "UART_0/UART_0_interface.h"
+<<<<<<< Updated upstream
 #include "SERVO/ServoMotor_Interface.h"
+=======
+#include "LED/LED_interface.h"
+
+>>>>>>> Stashed changes
 
 uint32_t SystemCoreClock = 16000000;
 
-#define BUILT_IN_LED_1  1
-#define BUILT_IN_LED_2  2
-#define BUILT_IN_LED_3  3
 
 void vPeriodicTask(void *pvParameters)
 {
@@ -33,10 +27,10 @@ void vPeriodicTask(void *pvParameters)
 
     for (;;)
     {
+        //NON-LBOCKING UART
+        UART_0_SendString("Hello World !!\n");
 
-        Tog_Bit(GPIO_PORTF_DATA_R, BUILT_IN_LED_3);
-
-        uart_sendString("helllllllllo\n");
+        LED_Toggle(BUILT_IN_LED_3_BLUE);
 
         // Block until the next release time.
         //vTaskDelayUntil(&xLastWakeTime, xDelay);
@@ -72,30 +66,12 @@ void ServoTest(void *pvParameters)
 
 int main()
 {
-    //---------------------------------------------------------------
-    // Enable the GPIOF peripheral
-    //
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-    // Wait for the GPIOF module to be ready.
-    //
-    while (!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF))
-    {
-    }
-    /*
-     // Set pins 2, 4, and 5 as input, SW controlled.
-     //
-     GPIOPinTypeGPIOInput(GPIO_PORTA_BASE,
-     GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
-     * */
 
-    // Set pins 2 and 3 as output, SW controlled.
-    //
-    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3);
-    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, GPIO_HIGH_LEVEL);
-    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, GPIO_HIGH_LEVEL);
-//-------------------------------------------------------------------
+
 // PA0 Tx pin   PA1 Rx pin
-    uart_init();
+    UART_0_Init();
+// PF1 RED LED   Pin
+    LED_Init(BUILT_IN_LED_1_RED);
 
     xTaskCreate(vPeriodicTask, "My Task", 256, NULL, 1, NULL);
 //-------------------------------------------------------------------

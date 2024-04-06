@@ -25,7 +25,7 @@
 //     - Baud rate - 115,200
 //     - 8-N-1 operation
 
-void uart_init(void);
-void uart_sendString(uint8_t *ptr);
+void UART_0_Init(void);
+void UART_0_SendString(uint8_t *ptr);
 
 #endif /* UART_0_UART_0_INTERFACE_H_ */
