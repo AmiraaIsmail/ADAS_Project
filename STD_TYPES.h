@@ -28,7 +28,7 @@ typedef volatile unsigned int               vuint32_t;
 typedef volatile unsigned long long int     vuint64_t;
 
 
-#define NULL		(void*)0
+//#define NULL		(void*)0
 
 
 #endif
