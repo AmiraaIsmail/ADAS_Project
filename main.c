@@ -4,16 +4,19 @@
 #include <FreeRTOS.h>
 #include <task.h>
 
+#include "BIT_MATH.h"
+
+#include "GPIO/GPIO.h"
 
 #include "Application/Application_interface.h"
 
 #include "UART_0/UART_0_interface.h"
-<<<<<<< Updated upstream
+//<<<<<<< Updated upstream
 #include "SERVO/ServoMotor_Interface.h"
-=======
+//=======
 #include "LED/LED_interface.h"
-
->>>>>>> Stashed changes
+#include "LCD/LCD_interface.h"
+//        >>>>>>> Stashed changes
 
 uint32_t SystemCoreClock = 16000000;
 
@@ -64,22 +67,46 @@ void ServoTest(void *pvParameters)
     }
 }
 
+
+void vPeriodicLcdTask(void *pvParameters)
+{
+    // Establish the task's period.
+    const TickType_t xDelay = pdMS_TO_TICKS(500);
+    for (;;)
+    {
+        uint8_t* str = "Tiva C Projects";    //Write any string you want to display on LCD
+        LCD_CLEAR_SCREEN();                             //Clear the display
+
+        //delay 500 ms for LCD (MCU is faster than LCD)
+        vTaskDelay(xDelay);
+        LCD_WriteString(str);                          //Write the string on LCD
+        vTaskDelay(xDelay);
+
+        // Block until the next release time.
+        //vTaskDelayUntil(&xLastWakeTime, xDelay);
+    }
+}
+
 int main()
 {
 
 
-// PA0 Tx pin   PA1 Rx pin
+    // PA0 Tx pin   PA1 Rx pin
     UART_0_Init();
-// PF1 RED LED   Pin
+    // PF1 RED LED   Pin
     LED_Init(BUILT_IN_LED_1_RED);
 
     xTaskCreate(vPeriodicTask, "My Task", 256, NULL, 1, NULL);
-//-------------------------------------------------------------------
-//    PA6      PA7
+    //-------------------------------------------------------------------
+    //    PA6      PA7
     ServoMotor_Init();
 
     xTaskCreate(ServoTest,"EditDuty", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
-//-------------------------------------------------------------------
+
+    //-------------------------------------------------------------------
+    LCD_Init();
+    xTaskCreate(vPeriodicLcdTask,"LCD_TASK", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+    //-------------------------------------------------------------------
 
     // Startup of the FreeRTOS scheduler.  The program should block here.
     vTaskStartScheduler();
