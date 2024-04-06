@@ -16,6 +16,7 @@
 #include "Application/Application_interface.h"
 
 #include "UART_0/UART_0_interface.h"
+#include "SERVO/ServoMotor_Interface.h"
 
 uint32_t SystemCoreClock = 16000000;
 
@@ -44,7 +45,30 @@ void vPeriodicTask(void *pvParameters)
 
 }
 
+void ServoTest(void *pvParameters)
+{
+    static int16_t Angle1=0;
+    static int16_t Angle2=180;
+    ServoMotor_Start(Front_Servo,Angle1);
+    ServoMotor_Start(Back_Servo,Angle2);
+    for (;;)
+    {
+        ServoMotor_Start(Front_Servo,Angle1);
+        ServoMotor_Start(Back_Servo,Angle2);
+        Angle1+=45;
+        Angle2-=45;
+        if (Angle1>180)
+        {
+            Angle1=0;
+        }
+        if (Angle2<0)
+        {
+            Angle2=180;
+        }
+        vTaskDelay( pdMS_TO_TICKS( 1500 ) ) ;
 
+    }
+}
 
 int main()
 {
@@ -74,6 +98,12 @@ int main()
     uart_init();
 
     xTaskCreate(vPeriodicTask, "My Task", 256, NULL, 1, NULL);
+//-------------------------------------------------------------------
+//    PA6      PA7
+    ServoMotor_Init();
+
+    xTaskCreate(ServoTest,"EditDuty", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+//-------------------------------------------------------------------
 
     // Startup of the FreeRTOS scheduler.  The program should block here.
     vTaskStartScheduler();
