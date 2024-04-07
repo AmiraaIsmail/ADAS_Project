@@ -1,8 +1,48 @@
-
 #ifndef GPIO_H_
 #define GPIO_H_
 
 #include "STD_TYPES.h"
+
+
+typedef enum
+{
+    PA=0,
+    PB,
+    PC,
+    PD,
+    PE,
+    PF
+}PORT_ID;
+
+
+typedef enum
+{
+    PIN0=0,
+    PIN1,
+    PIN2,
+    PIN3,
+    PIN4,
+    PIN5,
+    PIN6,
+    PIN7
+}PIN_ID;
+
+
+typedef enum
+{
+    OUT=0,
+    INPUT,
+    INPULLUP,
+    INPULLDOWN
+}DIRECTION_ID;
+
+
+typedef enum
+{
+    LOW=0,
+    HIGH
+}VOLTAGE_ID;
+
 
 /******************************************************************************************************************************
  * \Syntax           : void GPIO_Init_Port(PORT_ID port)
@@ -203,45 +243,6 @@ u8 GPIO_Get_Pin_Value(PORT_ID port,PIN_ID pin);
  ******************************************************************************************************************************/
 void GPIO_Toggle_Pin_Value(PORT_ID port,PIN_ID pin);
 
-
-typedef enum
-{
-    PA=0,
-    PB,
-    PC,
-    PD,
-    PE,
-    PF
-}PORT_ID;
-
-
-typedef enum
-{
-    PIN0=0,
-    PIN1,
-    PIN2,
-    PIN3,
-    PIN4,
-    PIN5,
-    PIN6,
-    PIN7
-}PIN_ID;
-
-
-typedef enum
-{
-    OUT=0,
-    INPUT,
-    INPULLUP,
-    INPULLDOWN
-}DIRECTION_ID;
-
-
-typedef enum
-{
-    LOW=0,
-    HIGH
-}VOLTAGE_ID;
 
 
 #endif /* GPIO_H_ */
