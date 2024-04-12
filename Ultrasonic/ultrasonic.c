@@ -1,8 +1,9 @@
 /*
- * ultrasonic.c
- *
- *  Created on: Apr 6, 2024
- *      Author: Lenovo
+ * @ file:   ultrasonic.c
+ * @ brief:  Ultrasonic Program file.c
+ * @ Author: Lenovo
+ * @ Date:   Apr 6, 2024
+ * @ Version 1.0
  */
 
 #include "STD_TYPES.h"
