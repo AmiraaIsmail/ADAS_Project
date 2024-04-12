@@ -10,24 +10,6 @@
 #include "ultrasonic.h"
 #include "tm4c123gh6pm.h"
 
-
-/*Init ultrasonic */
-void Ultrasonic_Init(void)
-{
-    //enable clock
-    SET_BIT(SYSCTL_RCGCGPIO_R, 5);
-    //Enable Digital PF1
-    SET_BIT(GPIO_PORTF_DEN_R, 2);
-    //Disable Alternative Function for PF1
-    CLR_BIT(GPIO_PORTF_AFSEL_R, 2);
-    //PF1 as OUTPUT
-    SET_BIT(GPIO_PORTF_DIR_R, 2);
-}
-
-
-
-
-
 /* Timer0A initialization function */
 /* Initialize Timer0A in input-edge time mode with up-count mode */
 
