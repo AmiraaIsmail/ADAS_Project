@@ -38,7 +38,7 @@ void TIMER0A_voidCaptureInit(void)
 /* from Timer Block 0 Timer A and returns the time difference (the period of the signal). */
 u32 Ultrasonic_u32GetDistance(void)
 {
-    u32 lastEdge, thisEdge, Time,distance;
+    u32 lastEdge, thisEdge, time,distance;
 
          /* Given 10us trigger pulse pinA3*/
          GPIO_PORTA_DATA_R &= ~(1<<3); /* make trigger  pin high */
@@ -58,7 +58,7 @@ u32 Ultrasonic_u32GetDistance(void)
        TIMER0_ICR_R = 4;            /* clear timer0A capture flag */
        while((TIMER0_RIS_R & 4) == 0) ;    /* wait till captured */
        thisEdge = TIMER0_TAR_R;     /* save the timestamp */
-           Time= (thisEdge - lastEdge); /* return the time difference */
+           time= (thisEdge - lastEdge); /* return the time difference */
 		   distance = (time * 10625)/10000000;
 		   return distance;
            }
