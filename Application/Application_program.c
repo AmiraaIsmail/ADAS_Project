@@ -20,7 +20,6 @@ void Update_Vehicle_Mode(void)
      *
      * */
 
-
 }
 
 void Check_Frontal_Sensor(void)
@@ -65,6 +64,8 @@ void Check_Frontal_Sensor(void)
 
 }
 
+extern BlinlingLED_t BlinkState_LED1;
+
 void Initiate_AutoParking_Mode(void)
 {
     /*
@@ -74,6 +75,18 @@ void Initiate_AutoParking_Mode(void)
     if (VehicleMode_obj == Vehilce_Auto_Parking_Mode)
     {
 
+        BlinkState_LED1 = LED_BlinkFast;
+        /*
+         * Scan For possible Space take 2 readings from ultrasonic rear/front
+         * suspend task for 1.5 seconds
+         * calculate length between 2 readings from ultrasonic
+         * if it fit move for 0.5 seconds
+         * stop
+         * then return with and angle  for 0.5seconds
+         * stop
+         * then rotate in place
+         * */
+
     }
     else
     {
@@ -82,4 +95,35 @@ void Initiate_AutoParking_Mode(void)
          * */
     }
 
+}
+
+/* reverse:  reverse string s in place */
+void reverse(uint8_t s[], uint16_t len)
+{
+    uint16_t i, j;
+    uint8_t c;
+
+    for (i = 0, j = len - 1; i < j; i++, j--)
+    {
+        c = s[i];
+        s[i] = s[j];
+        s[j] = c;
+    }
+}
+
+void itoa(uint32_t n, uint8_t s[])
+{
+    uint16_t i, len;
+    len = 0;
+    i = 0;
+    do
+    {
+        /* generate digits in reverse order */
+        s[i++] = n % 10 + '0'; /* get next digit */
+        len++;
+    }
+    while ((n /= 10) > 0); /* delete it */
+
+    s[i] = '\0';
+    reverse(s, len);
 }
