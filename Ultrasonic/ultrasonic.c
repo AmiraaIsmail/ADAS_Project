@@ -34,6 +34,37 @@ void TIMER0A_voidCaptureInit(void)
     TIMER0_CTL_R |= (1<<0);           /* enable timer0A */
 }
 
+/* This function captures consecutive rising and falling edges of a periodic signal */
+/* from Timer Block 0 Timer A and returns the time difference (the period of the signal). */
+u32 Ultrasonic_u32GetDistance(void)
+{
+    u32 lastEdge, thisEdge,distance;
+
+    /* Given 10us trigger pulse pinA3*/
+    GPIO_PORTA_DATA_R &= ~(1<<3); /* make trigger  pin high */
+    Delay_MicroSecond(10); /*10 seconds delay */
+    GPIO_PORTA_DATA_R |= (1<<3); /* make trigger  pin high */
+    Delay_MicroSecond(10); /*10 seconds delay */
+    GPIO_PORTA_DATA_R &= ~(1<<3); /* make trigger  pin low */
+
+    while(1)
+    {
+        TIMER0_ICR_R= 4;            /* clear timer0A capture flag */
+        while((TIMER0_RIS_R & 4) == 0) ;    /* wait till captured */
+        if(GPIO_PORTB_DATA_R & (1<<6)) /*check if rising edge occurs */
+        {
+            lastEdge = TIMER0_TAR_R;     /* save the timestamp */
+            /* detect falling edge */
+            TIMER0_ICR_R = 4;            /* clear timer0A capture flag */
+            while((TIMER0_RIS_R & 4) == 0) ;    /* wait till captured */
+            thisEdge = TIMER0_TAR_R;     /* save the timestamp */
+            /* take pulse duration measurement */
+            distance = ((thisEdge - lastEdge) * 10625)/10000000;
+            return distance; /* return the time difference */
+        }
+    }
+
+}
 /* Timer2A initialization function */
 /* Initialize Timer2A in input-edge time mode with up-count mode */
 void TIMER2A_voidCaptureInit(void)
@@ -89,39 +120,6 @@ u32 Ultrasonic2_u32GetDistance(void)
 
 }
 
-
-
-/* This function captures consecutive rising and falling edges of a periodic signal */
-/* from Timer Block 0 Timer A and returns the time difference (the period of the signal). */
-u32 Ultrasonic1_u32GetDistance(void)
-{
-    u32 lastEdge, thisEdge,distance;
-
-    /* Given 10us trigger pulse pinA3*/
-    GPIO_PORTA_DATA_R &= ~(1<<3); /* make trigger  pin high */
-    Delay_MicroSecond(10); /*10 seconds delay */
-    GPIO_PORTA_DATA_R |= (1<<3); /* make trigger  pin high */
-    Delay_MicroSecond(10); /*10 seconds delay */
-    GPIO_PORTA_DATA_R &= ~(1<<3); /* make trigger  pin low */
-
-    while(1)
-    {
-        TIMER0_ICR_R= 4;            /* clear timer0A capture flag */
-        while((TIMER0_RIS_R & 4) == 0) ;    /* wait till captured */
-        if(GPIO_PORTB_DATA_R & (1<<6)) /*check if rising edge occurs */
-        {
-            lastEdge = TIMER0_TAR_R;     /* save the timestamp */
-            /* detect falling edge */
-            TIMER0_ICR_R = 4;            /* clear timer0A capture flag */
-            while((TIMER0_RIS_R & 4) == 0) ;    /* wait till captured */
-            thisEdge = TIMER0_TAR_R;     /* save the timestamp */
-            /* take pulse duration measurement */
-            distance = ((thisEdge - lastEdge) * 10625)/10000000;
-            return distance; /* return the time difference */
-        }
-    }
-
-}
 
 /* Create one microsecond second delay using Timer block 1 and sub timer A */
 

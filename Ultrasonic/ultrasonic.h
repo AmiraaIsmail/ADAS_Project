@@ -20,7 +20,7 @@ void TIMER0A_voidCaptureInit(void);
  * @ Parameter: void
  * @ Return :   u32(distance)
  */
-u32 Ultrasonic1_u32GetDistance(void);
+u32 Ultrasonic_u32GetDistance(void);
 /*
  * @ Brief : this function initialize Timer1A in input-edge time mode with up-count mode
  * @ Parameter: void
