@@ -14,12 +14,25 @@
  * @ Return :   void
  */
 void TIMER0A_voidCaptureInit(void);
+
 /*
  * @ Brief:  This function calculates the distance as it captures consecutive rising and falling edges of a periodic signal
  * @ Parameter: void
  * @ Return :   u32(distance)
  */
-u32 Ultrasonic_u32GetDistance(void);
+u32 Ultrasonic1_u32GetDistance(void);
+/*
+ * @ Brief : this function initialize Timer1A in input-edge time mode with up-count mode
+ * @ Parameter: void
+ * @ Return :   void
+ */
+void TIMER2A_voidCaptureInit(void);
+/*
+ * @ Brief:  This function calculates the distance as it captures consecutive rising and falling edges of a periodic signal
+ * @ Parameter: void
+ * @ Return :   u32(distance)
+ */
+u32 Ultrasonic2_u32GetDistance(void);
 /*
  * @ Brief : this function make delay of microsecond
  * @ Parameter: u32(time)
