@@ -1,7 +1,7 @@
 #ifndef GPIO_H_
 #define GPIO_H_
 
-#include "STD_TYPES.h"
+
 
 
 typedef enum
@@ -181,7 +181,7 @@ void GPIO_Set_Pin_Value(PORT_ID port,PIN_ID pin,VOLTAGE_ID value);
  *
  * \Return value     : None
  ******************************************************************************************************************************/
-void GPIO_Set_Port_Value(PORT_ID port,u8 value);
+void GPIO_Set_Port_Value(PORT_ID port,uint8_t value);
 
 /******************************************************************************************************************************
  * \Syntax           : u8 GPIO_Get_Pin_Value(PORT_ID port,PIN_ID pin)
@@ -211,7 +211,7 @@ void GPIO_Set_Port_Value(PORT_ID port,u8 value);
  *
  * \Return value     : u8
  ******************************************************************************************************************************/
-u8 GPIO_Get_Pin_Value(PORT_ID port,PIN_ID pin);
+uint8_t GPIO_Get_Pin_Value(PORT_ID port,PIN_ID pin);
 
 /******************************************************************************************************************************
  * \Syntax           : void GPIO_Toggle_Pin_Value(PORT_ID port,PIN_ID pin)
