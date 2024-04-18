@@ -5,6 +5,7 @@
 #include "driverlib/pwm.h"
 #include "driverlib/pin_map.h"
 #include "driverlib/gpio.h"
+#include "GPIO/GPIO.h"
 #include "Wheels_Interface.h"
 
 /*The TM4C123GH6PM microcontroller contains two PWM modules
@@ -20,9 +21,9 @@ void Wheels_Init(void)
 	//enable clock for Module 0  
     SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM0);
 	// Wait for the PWM0 module to be ready.
-//    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_PWM0))
-//    {
-//    }
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_PWM0))
+    {
+    }
     /* This function sets the PWM clock divider as the PWM clock source.
       It also configures the clock frequency to the PWM module as a division of the system clock*/
       //Assumed clock source 16MHZ  Divide by 16 so clock for Module 0 is 1MHZ Ticks 1 microsecond
@@ -44,12 +45,20 @@ void Wheels_Init(void)
 
     Wheels_SetFreq_HZ(PWM_GEN_0,50);
     Wheels_SetFreq_HZ(PWM_GEN_1,50);
+
+
 	//	By Default ports of two lm298  is Enable
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
 	//dir
-	GPIOPinTypeGPIOOutput(H1_PORT,H1_IN1|H1_IN2|H1_IN3|H1_IN4);
-	GPIOPinTypeGPIOOutput(H2_PORT,H2_IN1|H2_IN2|H2_IN3|H2_IN4);
+	GPIOPinTypeGPIOOutput(H1_PORT,H1_IN1);
+    GPIOPinTypeGPIOOutput(H1_PORT,H1_IN2);
+    GPIOPinTypeGPIOOutput(H1_PORT,H1_IN3);
+    GPIOPinTypeGPIOOutput(H1_PORT,H1_IN4);
+	GPIOPinTypeGPIOOutput(H2_PORT,H2_IN1);
+    GPIOPinTypeGPIOOutput(H2_PORT,H2_IN2);
+    GPIOPinTypeGPIOOutput(H2_PORT,H2_IN3);
+    GPIOPinTypeGPIOOutput(H2_PORT,H2_IN4);
 }
 
 //we use Module 0 Two Fuctions to Enable and Disable PWM Genrator 0 or 1
@@ -114,7 +123,7 @@ void Wheels_SetDuty(uint32_t ui32PWMOut, uint8_t ui8Duty)
   uint32_t ui32Width;
   ui32Width =((uint32_t)Local_LoadValue*Local_Duty)/100;
   PWMPulseWidthSet(PWM0_BASE, ui32PWMOut,  ui32Width);
-  
+
   /*this function causes all queued updates to the period or
     pulse width to be applied the next time the corresponding counter becomes zero*/
   if (Local_GenNum==0)
@@ -194,8 +203,11 @@ void Wheels_ResetTimer(uint32_t ui32Gen)
 void Wheels_GoForwardSpeed(uint8_t ui8Speed)
 {
 	// wheel on front right go forward
-	GPIOPinWrite(H1_PORT,H1_IN1,H1_IN1);
-	GPIOPinWrite(H1_PORT,H1_IN2,0x00);
+
+
+    GPIOPinWrite(H1_PORT,H1_IN1,H1_IN1);    //    <--------BUG HERE
+    GPIOPinWrite(H1_PORT,H1_IN2,0);
+
 	// wheel on back right go forward
 	GPIOPinWrite(H1_PORT,H1_IN3,H1_IN3);
 	GPIOPinWrite(H1_PORT,H1_IN4,0);
@@ -204,7 +216,7 @@ void Wheels_GoForwardSpeed(uint8_t ui8Speed)
 	GPIOPinWrite(H2_PORT,H2_IN2,0);
 	// wheel on back left go forward
 	GPIOPinWrite(H2_PORT,H2_IN3,H2_IN3);
-	GPIOPinWrite(H2_PORT,H2_IN4,0);	
+	GPIOPinWrite(H2_PORT,H2_IN4,0);
 	//set speed 
 	//ui32PWMOut This parameter must be one of PWM_OUT_0, PWM_OUT_1, PWM_OUT_2, PWM_OUT_3 that we used
 	Wheels_SetDuty(PWM_OUT_0, ui8Speed);
@@ -302,4 +314,16 @@ void Wheels_Rotate(Rotate_t Dir , uint8_t ui8Speed)
               Wheels_EnableGen(PWM_GEN_1);
        break;
     }
+}
+
+uint32_t Wheels_GetSpeed (void)
+{
+    //This parameter must be one of PWM_OUT_0, PWM_OUT_1, PWM_OUT_2, PWM_OUT_3
+    return (PWMPulseWidthGet(PWM0_BASE, PWM_OUT_0) * 100)/PWMGenPeriodGet(PWM0_BASE, PWM_GEN_0);;
+}
+
+void Wheels_Break(void)
+{
+    PWMOutputState(PWM0_BASE, PWM_OUT_0_BIT|PWM_OUT_1_BIT, false);
+    PWMOutputState(PWM0_BASE, PWM_OUT_2_BIT|PWM_OUT_3_BIT, false);
 }

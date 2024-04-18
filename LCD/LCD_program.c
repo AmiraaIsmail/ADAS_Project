@@ -4,6 +4,7 @@
  *  Created on: Apr 2, 2024
  *      Author: SMART
  */
+#include  <stdint.h>
 #include "LCD_interface.h"
 #include "tm4c123gh6pm.h"
 #include "GPIO/GPIO.h"
@@ -56,7 +57,7 @@ void LCD_Write4bits(uint8_t data, uint8_t control)
 
 void LCD_WriteString(uint8_t * str)
 {
-    vuint32_t i = 0;          //volatile is important
+    uint32_t i = 0;          //volatile is important
 
     while(*(str+i) != '\0')       //until the end of the string
     {
@@ -80,14 +81,14 @@ void LCD_GOTOXY(uint8_t line,uint8_t position)
 {
     if (line == 0)
     {
-        if (position < 16 && position >= 0)
+        if (position < 16)
         {
             LCD_SendCmd(LCD_CMD_BEGIN_AT_FIRST_ROW + position);
         }
     }
     else if (line == 1)
     {
-        if (position < 16 && position >= 0)
+        if (position < 16)
         {
             LCD_SendCmd(LCD_CMD_BEGIN_AT_SECOND_ROW + position);
         }
@@ -95,7 +96,7 @@ void LCD_GOTOXY(uint8_t line,uint8_t position)
 }
 
 
-void LCD_voidWriteNumber(uint32_t Copy_u8num )
+void LCD_voidWriteNumber(int32_t Copy_u8num )
 {
 
     uint8_t str[10]={0},i=0 ,j;
@@ -127,7 +128,7 @@ void LCD_voidWriteNumber(uint32_t Copy_u8num )
 
 void delayMs(uint32_t n)
 {
-    vuint32_t i,j;             //volatile is important for variables incremented in code
+    uint32_t i,j;             //volatile is important for variables incremented in code
     for(i=0;i<n;i++)
         for(j=0;j<3180;j++)         //delay for 1 msec
         {}
@@ -135,7 +136,7 @@ void delayMs(uint32_t n)
 
 void delayUs(uint32_t n)
 {
-    vuint32_t i,j;                           //volatile is important for variables incremented in code
+    uint32_t i,j;                           //volatile is important for variables incremented in code
     for(i=0;i<n;i++)
         for(j=0;j<3;j++)            //delay for 1 micro second
         {}

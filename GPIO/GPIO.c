@@ -1,4 +1,4 @@
-#include"STD_TYPES.h"
+#include  <stdint.h>
 #include "BIT_MATH.h"
 #include "GPIO.h"
 #include "GPIO_REG.h"
@@ -860,7 +860,7 @@ void GPIO_Set_Pin_Value(PORT_ID port,PIN_ID pin,VOLTAGE_ID value)
 }
 
 
-void GPIO_Set_Port_Value(PORT_ID port,u8 value)
+void GPIO_Set_Port_Value(PORT_ID port,uint8_t value)
 {
     if(port<=PF)
     {
@@ -894,9 +894,9 @@ void GPIO_Set_Port_Value(PORT_ID port,u8 value)
 }
 
 
-u8 GPIO_Get_Pin_Value(PORT_ID port,PIN_ID pin)
+uint8_t GPIO_Get_Pin_Value(PORT_ID port,PIN_ID pin)
 {
-    u8 data;
+    uint8_t data;
     if((port<=PF)&&(pin<=PIN7))
     {
         switch(port)
