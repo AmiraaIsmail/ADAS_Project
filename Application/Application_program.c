@@ -76,17 +76,71 @@ void Initiate_AutoParking_Mode(void)
     {
 
         BlinkState_LED1 = LED_BlinkFast;
+
+        /*
+         * adjust Servo Motor with proper right-angle
+         * Assuming Servo Motor Already initialized
+         * and settled with wanted frequency
+         *
+         * */
+        ServoMotor_Start(0, 180);
+        ServoMotor_Start(1, 0);
+        /*
+         * Assuming Ultrasonic Already initialized
+         * */
+        uint32_t distance1;
+        uint32_t distance2;
+
+        /* set timer to 5 sec delay to timeout this feature
+         * */
+        //dummy values
+        uint32_t Timer_timeout_flag = 1;
+        uint32_t threshold_in_Cm = 9;
+        bool PossibleSpot_acuainted;
+        bool FoundSpot = false;
+
         /*
          * Scan For possible Space take 2 readings from ultrasonic rear/front
-         * suspend task for 1.5 seconds
-         * calculate length between 2 readings from ultrasonic
-         * if it fit move for 0.5 seconds
-         * stop
-         * then return with and angle  for 0.5seconds
-         * stop
-         * then rotate in place
          * */
+        while (Timer_timeout_flag || FoundSpot)
+        {
+            distance1 = UltrasonicBack_u32GetDistance();
+            distance2 = UltrasonicFront_u32GetDistance();
 
+            if (distance1 > threshold_in_Cm && distance2 < threshold_in_Cm)
+            {  // possible spot
+                PossibleSpot_acuainted = true;
+            }
+
+            if (distance1 > threshold_in_Cm&& distance2 > threshold_in_Cm
+            && PossibleSpot_acuainted == true)
+            {  // Found a spot
+                PossibleSpot_acuainted = false;
+                FoundSpot = true;
+            }
+
+            if (distance1 < threshold_in_Cm && distance2 < threshold_in_Cm)
+            {  // possible spot
+                PossibleSpot_acuainted = false;
+            }
+
+        }  // End of while
+
+        if (FoundSpot)
+        {        // Suitable Spot for parking detected
+
+            // move vehicle forward for 0.5 seconds
+            // reverse with angle 45 if possible
+            // move backwards while having the same angle
+            // stop
+            // rotate within the same place
+        }
+        else
+        {        // Task Time-out or didn't find suitable spot
+            // Blink LED to inform driver that no possible parking spot found
+            // yield task if possible
+
+        }
     }
     else
     {

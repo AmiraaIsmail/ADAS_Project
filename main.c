@@ -22,7 +22,7 @@
 #include "Ultrasonic/ultrasonic.h"
 
 // Utils
-#include "STD_TYPES.h"
+//#include "STD_TYPES.h"
 // #include <stdio.h>
 
 /* #defines  */
@@ -88,11 +88,11 @@ void pxTask2Code(void *pvParameters)
     {
 //          PB6 echo   PB2 trig
 
-        uint32_t distance = Ultrasonic_u32GetDistance();
+        uint32_t distance = UltrasonicFront_u32GetDistance();
 
         uint8_t distance_str[12];
 
-        itoa((distance / 1000), distance_str);
+        itoa((distance ), distance_str);
 
 //        sprintf((char*)distance_str, "%i", distance);
         UART_0_SendString((uint8_t*) distance_str);
@@ -106,7 +106,7 @@ void pxTask2Code(void *pvParameters)
 
 int main()
 {
-    //Init Section
+//Init Section
 
     //Init Led
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
@@ -116,13 +116,13 @@ int main()
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_3);
 
 // Init UltraSonic
-    TIMER0A_voidCaptureInit();
+    TIMER3_voidCaptureInit();
 
     //Init UART
     UART_0_Init();
 
-    //Create Tasks
-//    xTaskCreate(pxTaskCode, "22", 256, NULL, 1, NULL);
+//Create Tasks
+    //xTaskCreate(pxTaskCode, "22", 256, NULL, 1, NULL);
     xTaskCreate(pxTask2Code, "23", 256, NULL, 1, NULL);
     xTaskCreate(pxTaskBlindLED1, "24", 256, NULL, 1, NULL);
 
