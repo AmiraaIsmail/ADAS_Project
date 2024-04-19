@@ -92,8 +92,15 @@ void pxTask2Code(void *pvParameters)
 
         uint8_t distance_str[12];
 
-        itoa((distance ), distance_str);
-
+        itoa((distance), distance_str);
+        if (distance < 5)
+        {
+            BlinkState_LED1 = LED_BlinkFast;
+        }
+        else if (distance > 10)
+        {
+            BlinkState_LED1 = LED_BlindSlow;
+        }
 //        sprintf((char*)distance_str, "%i", distance);
         UART_0_SendString((uint8_t*) distance_str);
 
@@ -108,7 +115,7 @@ int main()
 {
 //Init Section
 
-    //Init Led
+//Init Led
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
 
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1);
