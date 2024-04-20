@@ -44,6 +44,9 @@ void pxTaskBlindLED1(void *pvParameters)
     {
         switch (BlinkState_LED1)
         {
+        case LED_Full:
+            xDelay = 1;
+            break;
         case LED_Stop:
             xDelay = 0;
             break;
@@ -62,7 +65,7 @@ void pxTaskBlindLED1(void *pvParameters)
         default:
             break;
         }
-        if (xDelay != 0)
+        if (xDelay > 1)
         {
 
             GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1);
@@ -70,17 +73,26 @@ void pxTaskBlindLED1(void *pvParameters)
             GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0x00);
             vTaskDelay(xDelay);
         }
-        else
+        else if (xDelay == 1)
+        {
+            //LED is On
+            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1);
+        }
+        else if (xDelay == 0)
         {
             //LED is Off
             GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0x00);
 
         }
+        else
+        {
+            UART_0_SendString("Error LED state\n");
+        }
     }
 }
 
 //---------------------------------------------------------------------------------------------------
-void pxTask2Code(void *pvParameters)
+void pxTaskPOV(void *pvParameters)
 {
     const TickType_t xDelay = 500 / portTICK_PERIOD_MS;
 
@@ -129,8 +141,8 @@ int main()
     UART_0_Init();
 
 //Create Tasks
-    //xTaskCreate(pxTaskCode, "22", 256, NULL, 1, NULL);
-    xTaskCreate(pxTask2Code, "23", 256, NULL, 1, NULL);
+
+    xTaskCreate(pxTaskPOV, "23", 256, NULL, 1, NULL);
     xTaskCreate(pxTaskBlindLED1, "24", 256, NULL, 1, NULL);
 
     // Startup of the FreeRTOS scheduler.  The program should block here.

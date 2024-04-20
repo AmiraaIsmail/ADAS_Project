@@ -2,6 +2,8 @@
 <<<<<<<=Updated upstream
 >>>>>>>=Stashed changes
 eclipse.preferences.version=1
+encoding//Debug/ADC/subdir_rules.mk=UTF-8
+encoding//Debug/ADC/subdir_vars.mk=UTF-8
 encoding//Debug/Application/subdir_rules.mk=UTF-8
 encoding//Debug/Application/subdir_vars.mk=UTF-8
 encoding//Debug/GPIO/subdir_rules.mk=UTF-8

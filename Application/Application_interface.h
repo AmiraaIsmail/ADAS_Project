@@ -21,6 +21,7 @@ typedef enum
 
 typedef enum {
     LED_Stop,
+    LED_Full,
     LED_BlinkFast,
     LED_BlindMid,
     LED_BlindSlow
