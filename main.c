@@ -32,7 +32,8 @@ uint32_t SystemCoreClock = 16000000;
 
 //---------------------------------------------------------------------------------------------------
 BlinlingLED_t BlinkState_LED1 = LED_Stop;
-
+uint8_t golbal_VehicalSpeed;
+VehicleMode_t global_DrivingState;
 // LED Indicator Tasks
 // TODO Test Validity of multiple occurrences of this task
 

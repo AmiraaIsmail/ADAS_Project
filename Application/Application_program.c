@@ -6,6 +6,13 @@
  */
 #include "Application_interface.h"
 
+
+extern uint8_t golbal_VehicalSpeed;
+extern VehicleMode_t global_DrivingState;
+
+
+
+
 void Update_Vehicle_Mode(void)
 {
     /*
@@ -181,3 +188,119 @@ void itoa(uint32_t n, uint8_t s[])
     s[i] = '\0';
     reverse(s, len);
 }
+
+
+
+
+
+
+
+Speed_State_t Update_Frontal_POV (uint32_t distance)
+{
+    Speed_State_t local_Flag ;
+    if( distance <= THERSHOLD1 )
+    {
+        local_Flag = Speed_stop ;
+    }
+
+    else if(distance >THERSHOLD1 && distance < THERSHOLD2)
+    {
+        local_Flag = Speed_Decrease;
+    }
+
+    else if(distance >=THERSHOLD2 && distance < MAX_RANGE)
+    {
+        local_Flag = Speed_Sustain;
+    }
+
+    else
+    {
+        local_Flag = Speed_Increase;
+    }
+    return local_Flag;
+}
+
+void Preform_Action(Speed_State_t Speed_state)
+{
+
+    static uint8_t local_speed=NOK;
+    uint8_t local_TempSpeed=NOK;
+    static uint8_t local_SpeedFlag=NOK;
+
+
+    switch(global_DrivingState)
+    {
+    case Vehicle_Driver_Mode:
+        local_SpeedFlag=NOK;
+        switch(Speed_state)
+        {
+        case Speed_stop:
+            // led on
+            BlinkState_LED1 = LED_Full;
+            break;
+        case Speed_Decrease:
+            // led blinkslow
+            BlinkState_LED1 = LED_BlindSlow;
+            break;
+        case Speed_Sustain:
+            // led blinkmid
+            BlinkState_LED1 = LED_BlindMid;
+            break;
+        case Speed_Increase:
+            //BLINK FAST
+            BlinkState_LED1 = LED_BlinkFast;
+            break;
+        }
+        break;
+        case Vehicle_Cruise_Control_Mode:
+            if(local_SpeedFlag ==NOK)
+            {
+                local_speed = golbal_VehicalSpeed;
+                local_SpeedFlag=OK;
+            }
+            else
+            {
+                //do nothing
+            }
+            switch(Speed_state)
+            {
+            case Speed_stop:
+                Wheels_Break();
+                break;
+            case Speed_Decrease:
+
+                local_TempSpeed = local_speed-SPEED_RANGE;
+                if(local_TempSpeed>=MIN_SPEED)
+                {
+                    Wheels_GoForwardSpeed(local_TempSpeed);
+                    local_speed= local_TempSpeed;
+                }
+                else
+                {
+                    Wheels_GoForwardSpeed(MIN_SPEED);
+                }
+
+                break;
+            case Speed_Sustain:
+                /* do nothing*/
+                break;
+            case Speed_Increase:
+
+                local_TempSpeed = local_speed+SPEED_RANGE;
+                if(local_TempSpeed <=golbal_VehicalSpeed)
+                {
+                    Wheels_GoForwardSpeed(local_TempSpeed);
+                    local_speed=local_TempSpeed;
+                }
+                else
+                {
+                    //do nothing
+                }
+
+                break;
+            }
+            break;
+
+    }
+}
+
