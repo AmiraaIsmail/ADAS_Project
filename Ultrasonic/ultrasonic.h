@@ -8,6 +8,8 @@
 
 #ifndef ULTASONIC_H_
 #define ULTASONIC_H_
+
+#include "stdint.h"
 /*
  * @ Brief : this function initialize Timer3 in input-edge time mode with up-count mode
  * @ Parameter: void
