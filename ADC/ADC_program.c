@@ -7,7 +7,7 @@
 
 #include "ADC_interface.h"
 
-void ADC_Init(uint32_t copy_u32ChannelNumber)
+void ADC_Init(uint32_t GPIO_pin , uint32_t ADC_channel)
 {
 
     //
@@ -29,7 +29,7 @@ void ADC_Init(uint32_t copy_u32ChannelNumber)
         // Consult the data sheet to see which functions are allocated per pin.
         // TODO: change this to select the port/pin you are using.
         //
-        GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_PIN_5);
+        GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_pin);
 
         //
         // Enable sample sequence 3 with a processor signal trigger.  Sequence 3
@@ -49,7 +49,7 @@ void ADC_Init(uint32_t copy_u32ChannelNumber)
         // conversion using sequence 3 we will only configure step 0.  For more
         // information on the ADC sequences and steps, reference the datasheet.
         //
-        ADCSequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH0 | ADC_CTL_IE |
+        ADCSequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH8 | ADC_CTL_IE |
                                  ADC_CTL_END);
 
         //
@@ -64,7 +64,7 @@ void ADC_Init(uint32_t copy_u32ChannelNumber)
         ADCIntClear(ADC0_BASE, 3);
 }
 
-uint32_t ADC_GetChannelRead(uint32_t copy_u32ChannelNumber)
+uint32_t ADC_GetChannelRead()
 {
     //
     // Trigger the ADC conversion.
@@ -92,3 +92,8 @@ uint32_t ADC_GetChannelRead(uint32_t copy_u32ChannelNumber)
 
 }
 
+uint32_t ADC_MapValue(uint32_t x, uint32_t in_min, uint32_t in_max,
+                      uint32_t out_min, uint32_t out_max)
+{
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}

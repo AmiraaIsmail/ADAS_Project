@@ -20,10 +20,9 @@
 #include "LCD/LCD_interface.h"
 #include "SERVO/ServoMotor_Interface.h"
 #include "Ultrasonic/ultrasonic.h"
+#include "ADC/ADC_interface.h"
 
 // Utils
-//#include "STD_TYPES.h"
-// #include <stdio.h>
 
 /* #defines  */
 
@@ -98,13 +97,16 @@ void pxTaskPOV(void *pvParameters)
 
     for (;;)
     {
-//          PB6 echo   PB2 trig
-
-        uint32_t distance = UltrasonicFront_u32GetDistance();
-
+        uint32_t distance = 5;//UltrasonicFront_u32GetDistance();
         uint8_t distance_str[12];
 
+        uint32_t adcValue = ADC_GetChannelRead();
+        adcValue = ADC_MapValue(adcValue, 0, 4096, 0, 100);
+        uint8_t adc_str[12];
+
+        itoa((adcValue), adc_str);
         itoa((distance), distance_str);
+
         if (distance < 5)
         {
             BlinkState_LED1 = LED_BlinkFast;
@@ -113,10 +115,10 @@ void pxTaskPOV(void *pvParameters)
         {
             BlinkState_LED1 = LED_BlindSlow;
         }
-//        sprintf((char*)distance_str, "%i", distance);
-        UART_0_SendString((uint8_t*) distance_str);
-
-        UART_0_SendString(" CM\t");
+        UART_0_SendString(distance_str);
+        UART_0_SendString(" cm  ");
+        UART_0_SendString(adc_str);
+        UART_0_SendString("% \t");
 
         vTaskDelay(xDelay);
     }
@@ -127,6 +129,8 @@ int main()
 {
 //Init Section
 
+//Init ADC
+    ADC_Init(GPIO_PIN_5, ADC_CTL_CH8);
 //Init Led
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
 
