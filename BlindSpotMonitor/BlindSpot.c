@@ -14,8 +14,7 @@ VehicleState_t BlindSpotMonitor(void)
     /* read the value of distance*/
     uint32_t local_Back_distance = UltrasonicBack_u32GetDistance();
     /*check if the Back_distance is greater than threshold2 and less than max range */
-    if ((local_Back_distance >= Threshold2)
-            && (local_Back_distance <= MAXRange))
+    if (local_Back_distance >= Threshold2)
     {
         /*update local vehicle state to normal state*/
         LocalVehicleState = NormalState;
