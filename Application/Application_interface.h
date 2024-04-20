@@ -10,7 +10,14 @@
 
 #include "stdint.h"
 #include "stdbool.h"
-#include "WHEELS/Wheels_Interface.h"
+
+
+#include "BlindSpotMonitor/BlindSpot.h"
+#include "WHEELS/Wheels_interface.h"
+#include "Ultrasonic/Ultrasonic.h"
+#include "SERVO/ServoMotor_Interface.h"
+
+
 #define THERSHOLD1      10
 #define THERSHOLD2      20
 #define MAX_RANGE       45
@@ -18,9 +25,6 @@
 #define MIN_SPEED       10
 #define NOK             0
 #define OK              1
-
-
-
 
 typedef enum
 {
@@ -32,8 +36,8 @@ typedef enum
 
 typedef enum
 {
-    LED_Stop, LED_Full, LED_BlinkFast, LED_BlindMid, LED_BlindSlow
-} BlinlingLED_t;
+    LED_Stop, LED_Full, LED_BlinkFast, LED_BlinkMid, LED_BlinkSlow
+} BlinkingLED_t;
 
 typedef enum
 {
@@ -43,11 +47,10 @@ typedef enum
 static VehicleMode_t VehicleMode_obj = Vehicle_Stop_Mode;
 
 void Update_Vehicle_Mode(void);
-/* Obstacle Detection Function  params distance in CM return Speed State */
-
-/* Cruise Control shared resource Speed State  update speed state  return NON */
 
 void Check_Frontal_Sensor(void);
+
+void Blind_Spot_Monitoring(void);
 
 void Initiate_AutoParking_Mode(void);
 
@@ -55,6 +58,6 @@ void itoa(uint32_t n, uint8_t s[]);
 
 Speed_State_t Update_Frontal_POV (uint32_t distance);
 
-void Preform_Action(Speed_State_t Speed_state);
+void Perform_Action(Speed_State_t Speed_state);
 
 #endif /* APPLICATION_APPLICATION_INTERFACE_H_ */

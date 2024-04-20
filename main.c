@@ -25,19 +25,27 @@
 // Utils
 
 /* #defines  */
+#define BS_LED GPIO_PIN_2
+#define POV_LED GPIO_PIN_1
 
 uint32_t SystemCoreClock = 16000000;
 
 // Tasks Implementation
 
 //---------------------------------------------------------------------------------------------------
-BlinlingLED_t BlinkState_LED1 = LED_Stop;
-uint8_t golbal_VehicalSpeed;
+
+BlinkingLED_t BlinkState_LED1 = LED_Stop;
+uint8_t global_VehicalSpeed;
 VehicleMode_t global_DrivingState;
+
+
+VehicleState_t GL_vehicle_sate;
+BlinkingLED_t GL_Blinking_LED2;
+
 // LED Indicator Tasks
 // TODO Test Validity of multiple occurrences of this task
 
-void pxTaskBlindLED1(void *pvParameters)
+void pxTaskBlinkLED1(void *pvParameters)
 {
     TickType_t xDelay;
     for (;;)
@@ -54,11 +62,11 @@ void pxTaskBlindLED1(void *pvParameters)
 
             xDelay = 100 / portTICK_PERIOD_MS;
             break;
-        case LED_BlindMid:
+        case LED_BlinkMid:
 
             xDelay = 400 / portTICK_PERIOD_MS;
             break;
-        case LED_BlindSlow:
+        case LED_BlinkSlow:
 
             xDelay = 800 / portTICK_PERIOD_MS;
             break;
@@ -68,20 +76,20 @@ void pxTaskBlindLED1(void *pvParameters)
         if (xDelay > 1)
         {
 
-            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1);
+            GPIOPinWrite(GPIO_PORTF_BASE, POV_LED, POV_LED);
             vTaskDelay(xDelay);
-            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0x00);
+            GPIOPinWrite(GPIO_PORTF_BASE, POV_LED, 0x00);
             vTaskDelay(xDelay);
         }
         else if (xDelay == 1)
         {
             //LED is On
-            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1);
+            GPIOPinWrite(GPIO_PORTF_BASE, POV_LED, POV_LED);
         }
         else if (xDelay == 0)
         {
             //LED is Off
-            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0x00);
+            GPIOPinWrite(GPIO_PORTF_BASE, POV_LED, 0x00);
 
         }
         else
@@ -91,6 +99,63 @@ void pxTaskBlindLED1(void *pvParameters)
     }
 }
 
+
+
+//---------------------------------------------------------------------------------------------------
+
+void pxTaskBlinkLED2(void *pvParameters)
+{
+    TickType_t xDelay;
+    for (;;)
+    {
+        switch (GL_Blinking_LED2)
+        {
+        case LED_Full:
+            xDelay = 1;
+            break;
+        case LED_Stop:
+            xDelay = 0;
+            break;
+        case LED_BlinkFast:
+
+            xDelay = 100 / portTICK_PERIOD_MS;
+            break;
+        case LED_BlinkMid:
+
+            xDelay = 400 / portTICK_PERIOD_MS;
+            break;
+        case LED_BlinkSlow:
+
+            xDelay = 800 / portTICK_PERIOD_MS;
+            break;
+        default:
+            break;
+        }
+        if (xDelay > 1)
+        {
+
+            GPIOPinWrite(GPIO_PORTF_BASE, BS_LED, BS_LED);
+            vTaskDelay(xDelay);
+            GPIOPinWrite(GPIO_PORTF_BASE, BS_LED, 0x00);
+            vTaskDelay(xDelay);
+        }
+        else if (xDelay == 1)
+        {
+            //LED is On
+            GPIOPinWrite(GPIO_PORTF_BASE, BS_LED, BS_LED);
+        }
+        else if (xDelay == 0)
+        {
+            //LED is Off
+            GPIOPinWrite(GPIO_PORTF_BASE, BS_LED, 0x00);
+
+        }
+        else
+        {
+            UART_0_SendString("Error LED state\n");
+        }
+    }
+}
 //---------------------------------------------------------------------------------------------------
 void pxTaskPOV(void *pvParameters)
 {
@@ -98,10 +163,14 @@ void pxTaskPOV(void *pvParameters)
 
     for (;;)
     {
-        uint32_t distance = 5;//UltrasonicFront_u32GetDistance();
+        Blind_Spot_Monitoring();
+        uint32_t distance = 9999;
         uint8_t distance_str[12];
 
-        uint32_t adcValue = ADC_GetChannelRead();
+        Speed_State_t state = Update_Frontal_POV(distance);
+        Perform_Action(state);
+
+        uint32_t adcValue = 9;//ADC_GetChannelRead();
         adcValue = ADC_MapValue(adcValue, 0, 4096, 0, 100);
         uint8_t adc_str[12];
 
@@ -114,7 +183,7 @@ void pxTaskPOV(void *pvParameters)
         }
         else if (distance > 10)
         {
-            BlinkState_LED1 = LED_BlindSlow;
+            BlinkState_LED1 = LED_Stop;
         }
         UART_0_SendString(distance_str);
         UART_0_SendString(" cm  ");
@@ -148,7 +217,8 @@ int main()
 //Create Tasks
 
     xTaskCreate(pxTaskPOV, "23", 256, NULL, 1, NULL);
-    xTaskCreate(pxTaskBlindLED1, "24", 256, NULL, 1, NULL);
+    xTaskCreate(pxTaskBlinkLED1, "24", 256, NULL, 1, NULL);
+    xTaskCreate(pxTaskBlinkLED2, "99", 512, NULL, 1, NULL);
 
     // Startup of the FreeRTOS scheduler.  The program should block here.
     vTaskStartScheduler();

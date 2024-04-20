@@ -6,12 +6,35 @@
  */
 #include "Application_interface.h"
 
-
-extern uint8_t golbal_VehicalSpeed;
+extern uint8_t global_VehicalSpeed;
 extern VehicleMode_t global_DrivingState;
 
+extern VehicleState_t GL_vehicle_sate;
+extern BlinkingLED_t GL_Blinking_LED2;
 
+void Blind_Spot_Monitoring(void)
+{
 
+    GL_vehicle_sate = BlindSpotMonitor();
+
+    switch (GL_vehicle_sate)
+    {
+    case NormalState:
+        // Driver doesn't need to be warned
+        GL_Blinking_LED2 = LED_Stop;
+        break;
+    case WarningState:
+        // vehicle detected within threshold
+        GL_Blinking_LED2 = LED_BlinkMid;
+        break;
+    case UrgentState:
+        // vehicle approched the driver's vehicle
+        GL_Blinking_LED2 = LED_BlinkFast;
+        break;
+    default:
+        break;
+    }
+}
 
 void Update_Vehicle_Mode(void)
 {
@@ -71,7 +94,7 @@ void Check_Frontal_Sensor(void)
 
 }
 
-extern BlinlingLED_t BlinkState_LED1;
+extern BlinkingLED_t BlinkState_LED1;
 
 void Initiate_AutoParking_Mode(void)
 {
@@ -189,26 +212,20 @@ void itoa(uint32_t n, uint8_t s[])
     reverse(s, len);
 }
 
-
-
-
-
-
-
-Speed_State_t Update_Frontal_POV (uint32_t distance)
+Speed_State_t Update_Frontal_POV(uint32_t distance)
 {
-    Speed_State_t local_Flag ;
-    if( distance <= THERSHOLD1 )
+    Speed_State_t local_Flag;
+    if (distance <= THERSHOLD1)
     {
-        local_Flag = Speed_stop ;
+        local_Flag = Speed_stop;
     }
 
-    else if(distance >THERSHOLD1 && distance < THERSHOLD2)
+    else if (distance > THERSHOLD1 && distance < THERSHOLD2)
     {
         local_Flag = Speed_Decrease;
     }
 
-    else if(distance >=THERSHOLD2 && distance < MAX_RANGE)
+    else if (distance >= THERSHOLD2 && distance < MAX_RANGE)
     {
         local_Flag = Speed_Sustain;
     }
@@ -220,19 +237,18 @@ Speed_State_t Update_Frontal_POV (uint32_t distance)
     return local_Flag;
 }
 
-void Preform_Action(Speed_State_t Speed_state)
+void Perform_Action(Speed_State_t Speed_state)
 {
 
-    static uint8_t local_speed=NOK;
-    uint8_t local_TempSpeed=NOK;
-    static uint8_t local_SpeedFlag=NOK;
+    static uint8_t local_speed = NOK;
+    uint8_t local_TempSpeed = NOK;
+    static uint8_t local_SpeedFlag = NOK;
 
-
-    switch(global_DrivingState)
+    switch (global_DrivingState)
     {
     case Vehicle_Driver_Mode:
-        local_SpeedFlag=NOK;
-        switch(Speed_state)
+        local_SpeedFlag = NOK;
+        switch (Speed_state)
         {
         case Speed_stop:
             // led on
@@ -240,11 +256,11 @@ void Preform_Action(Speed_State_t Speed_state)
             break;
         case Speed_Decrease:
             // led blinkslow
-            BlinkState_LED1 = LED_BlindSlow;
+            BlinkState_LED1 = LED_BlinkSlow;
             break;
         case Speed_Sustain:
             // led blinkmid
-            BlinkState_LED1 = LED_BlindMid;
+            BlinkState_LED1 = LED_BlinkMid;
             break;
         case Speed_Increase:
             //BLINK FAST
@@ -252,54 +268,54 @@ void Preform_Action(Speed_State_t Speed_state)
             break;
         }
         break;
-        case Vehicle_Cruise_Control_Mode:
-            if(local_SpeedFlag ==NOK)
+    case Vehicle_Cruise_Control_Mode:
+        if (local_SpeedFlag == NOK)
+        {
+            local_speed = global_VehicalSpeed;
+            local_SpeedFlag = OK;
+        }
+        else
+        {
+            //do nothing
+        }
+        switch (Speed_state)
+        {
+        case Speed_stop:
+            Wheels_Break();
+            break;
+        case Speed_Decrease:
+
+            local_TempSpeed = local_speed - SPEED_RANGE;
+            if (local_TempSpeed >= MIN_SPEED)
             {
-                local_speed = golbal_VehicalSpeed;
-                local_SpeedFlag=OK;
+                Wheels_GoForwardSpeed(local_TempSpeed);
+                local_speed = local_TempSpeed;
+            }
+            else
+            {
+                Wheels_GoForwardSpeed(MIN_SPEED);
+            }
+
+            break;
+        case Speed_Sustain:
+            /* do nothing*/
+            break;
+        case Speed_Increase:
+
+            local_TempSpeed = local_speed + SPEED_RANGE;
+            if (local_TempSpeed <= global_VehicalSpeed)
+            {
+                Wheels_GoForwardSpeed(local_TempSpeed);
+                local_speed = local_TempSpeed;
             }
             else
             {
                 //do nothing
             }
-            switch(Speed_state)
-            {
-            case Speed_stop:
-                Wheels_Break();
-                break;
-            case Speed_Decrease:
 
-                local_TempSpeed = local_speed-SPEED_RANGE;
-                if(local_TempSpeed>=MIN_SPEED)
-                {
-                    Wheels_GoForwardSpeed(local_TempSpeed);
-                    local_speed= local_TempSpeed;
-                }
-                else
-                {
-                    Wheels_GoForwardSpeed(MIN_SPEED);
-                }
-
-                break;
-            case Speed_Sustain:
-                /* do nothing*/
-                break;
-            case Speed_Increase:
-
-                local_TempSpeed = local_speed+SPEED_RANGE;
-                if(local_TempSpeed <=golbal_VehicalSpeed)
-                {
-                    Wheels_GoForwardSpeed(local_TempSpeed);
-                    local_speed=local_TempSpeed;
-                }
-                else
-                {
-                    //do nothing
-                }
-
-                break;
-            }
             break;
+        }
+        break;
 
     }
 }
