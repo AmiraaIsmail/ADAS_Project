@@ -6,7 +6,7 @@
 /* Timer0A initialization function */
 /* Initialize Timer0A in input-edge time mode with up-count mode */
 
-void TIMER3_voidCaptureInit(void)
+void Ultrasonic_Init(void)
 {
     SYSCTL_RCGCTIMER_R |= 8;     /* enable clock to Timer Block 0 */
     SYSCTL_RCGCGPIO_R |= 2;      /* enable clock to PORTB */

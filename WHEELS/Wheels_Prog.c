@@ -205,7 +205,7 @@ void Wheels_GoForwardSpeed(uint8_t ui8Speed)
 	// wheel on front right go forward
 
 
-    GPIOPinWrite(H1_PORT,H1_IN1,H1_IN1);    //    <--------BUG HERE
+    GPIOPinWrite(H1_PORT,H1_IN1,H1_IN1);
     GPIOPinWrite(H1_PORT,H1_IN2,0);
 
 	// wheel on back right go forward

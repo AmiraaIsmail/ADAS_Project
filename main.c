@@ -38,7 +38,6 @@ BlinkingLED_t BlinkState_LED1 = LED_Stop;
 uint8_t global_VehicalSpeed;
 VehicleMode_t global_DrivingState;
 
-
 VehicleState_t GL_vehicle_sate;
 BlinkingLED_t GL_Blinking_LED2;
 
@@ -98,8 +97,6 @@ void pxTaskBlinkLED1(void *pvParameters)
         }
     }
 }
-
-
 
 //---------------------------------------------------------------------------------------------------
 
@@ -163,15 +160,17 @@ void pxTaskPOV(void *pvParameters)
 
     for (;;)
     {
-        Blind_Spot_Monitoring();
-        uint32_t distance = 9999;
+//        Blind_Spot_Monitoring();
+        uint32_t distance = UltrasonicFront_u32GetDistance();
         uint8_t distance_str[12];
-
+// Not-Tested --------
         Speed_State_t state = Update_Frontal_POV(distance);
         Perform_Action(state);
-
-        uint32_t adcValue = 9;//ADC_GetChannelRead();
+//--------------------
+        uint32_t adcValue =  ADC_GetChannelRead();
         adcValue = ADC_MapValue(adcValue, 0, 4096, 0, 100);
+        global_VehicalSpeed = adcValue;
+
         uint8_t adc_str[12];
 
         itoa((adcValue), adc_str);
@@ -197,19 +196,24 @@ void pxTaskPOV(void *pvParameters)
 
 int main()
 {
+
 //Init Section
 
-//Init ADC
+    //Init ADC
     ADC_Init(GPIO_PIN_5, ADC_CTL_CH8);
-//Init Led
+
+    //Wheels Init
+    Wheels_Init();
+
+    //Init Led
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
 
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1);
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_2);
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_3);
 
-// Init UltraSonic
-    TIMER3_voidCaptureInit();
+    // Init UltraSonic
+    Ultrasonic_Init();
 
     //Init UART
     UART_0_Init();

@@ -15,7 +15,7 @@
  * @ Parameter: void
  * @ Return :   void
  */
-void TIMER3_voidCaptureInit(void);
+void Ultrasonic_Init(void);
 /*
  * @ Brief:  This function calculates the distance for front Ultrasonic as it captures consecutive rising and falling edges of a periodic signal
  * @ Parameter: void
